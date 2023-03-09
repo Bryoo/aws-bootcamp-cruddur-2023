@@ -35,7 +35,6 @@ provider.add_span_processor(processor)
 # start x-ray recorder
 xray_url = os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
-XRayMiddleware(app, xray_recorder)
 
 # show logs within backend flask - stdout
 simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
@@ -49,6 +48,9 @@ app = Flask(__name__)
 # Initialize automatic instrumentation with Flask
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
+
+# instrument xray
+XRayMiddleware(app, xray_recorder)
 
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
